@@ -47,7 +47,7 @@ def new_record(request):
         v = request.GET.get('value', None)
         if v:
             r = Record.objects.filter(date__date=datetime.now().date(), user=request.user)
-            if r.count == 0:
+            if r.count() == 0:
                 r = Record()
                 r.value = v
                 r.date = datetime.now()
@@ -82,5 +82,20 @@ def edit_record(request):
 def user_records(request):
     if request.user.is_authenticated:
         return hresp(content=list(Record.objects.filter(user=request.user).values()), status=200)
+    else:
+        return hresp(status=403)
+
+
+def get_record(request):
+    if request.user.is_authenticated:
+        y = request.GET.get('year', None)
+        m = request.GET.get('month', None)
+        d = request.GET.get('day', None)
+        if y and m and d:
+            print(list(Record.objects.filter(date__date=datetime(int(y), int(m), int(d)), user=request.user).values()))
+            return hresp(content=list(Record.objects.filter(date__date=datetime(int(y), int(m), int(d)), user=request.user).values()),
+                         status=200)
+        else:
+            return hresp(status=400)
     else:
         return hresp(status=403)

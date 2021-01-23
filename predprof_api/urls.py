@@ -23,5 +23,6 @@ urlpatterns = [
     path('login/', login),
     path('new_record/', new_record),
     path('edit_record/', edit_record),
-    path('user_records/', user_records)
+    path('user_records/', user_records),
+    path('get_record/', get_record)
 ]
