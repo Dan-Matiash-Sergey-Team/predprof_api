@@ -1,15 +1,19 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as d_login
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
 from django.http.response import HttpResponse as hresp
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import permissions
 from datetime import datetime
 from .models import Record
+from .serializers import RecordSerializer, UserSerializer
 
 
-def regist(request):
-    log = request.GET.get('log', None)
-    pwd = request.GET.get('pwd', None)
+def register(request):
+    log = request.GET.get('login', None)
+    pwd = request.GET.get('password', None)
     if log and pwd:
         if User.objects.filter(username=log):
             return hresp(status=400)
@@ -34,7 +38,7 @@ def login(request):
     return hresp(status=400)
 
 
-def logut(request):
+def logout(request):
     if request.user.is_authenticated:
         logout(request)
         return hresp(status=200)
@@ -93,9 +97,42 @@ def get_record(request):
         d = request.GET.get('day', None)
         if y and m and d:
             print(list(Record.objects.filter(date__date=datetime(int(y), int(m), int(d)), user=request.user).values()))
-            return hresp(content=list(Record.objects.filter(date__date=datetime(int(y), int(m), int(d)), user=request.user).values()),
-                         status=200)
+            return hresp(content=list(
+                Record.objects.filter(date__date=datetime(int(y), int(m), int(d)), user=request.user).values()),
+                status=200)
         else:
             return hresp(status=400)
     else:
         return hresp(status=403)
+
+
+class RecordView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        records = Record.objects.filter(user=request.user)
+        serializer = RecordSerializer(records, many=True)
+        return Response({"records": serializer.data}, status=200)
+
+    def post(self, request):
+        record = request.data.get('record')
+        record['user'] = {'id': request.user.id, 'username': request.user.username}
+        record['date'] = datetime.now()
+        print(record)
+        serializer = RecordSerializer(data=record)
+        print(serializer.is_valid(raise_exception=True))
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=200)
+        else:
+            return Response(status=400)
+
+    def put(self, request):
+        record = get_object_or_404(Record.objects.filter(user=request.user), date__date=datetime.now().date())
+        data = request.data.get('record')
+        data['date'] = datetime.now()
+        serializer = RecordSerializer(instance=record, data=data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(status=200)
+        return Response(status=400)
