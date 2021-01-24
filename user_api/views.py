@@ -118,9 +118,7 @@ class RecordView(APIView):
         record = request.data.get('record')
         record['user'] = {'id': request.user.id, 'username': request.user.username}
         record['date'] = datetime.now()
-        print(record)
         serializer = RecordSerializer(data=record)
-        print(serializer.is_valid(raise_exception=True))
         if serializer.is_valid():
             serializer.save()
             return Response(status=200)
@@ -131,7 +129,9 @@ class RecordView(APIView):
         record = get_object_or_404(Record.objects.filter(user=request.user), date__date=datetime.now().date())
         data = request.data.get('record')
         data['date'] = datetime.now()
+        print(data)
         serializer = RecordSerializer(instance=record, data=data, partial=True)
+        print(serializer.is_valid(raise_exception=True))
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(status=200)

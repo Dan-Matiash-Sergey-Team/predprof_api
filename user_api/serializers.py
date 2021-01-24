@@ -20,10 +20,6 @@ def check_weight(val):
     return 0 < val < 300
 
 
-def check_day_of_record(user):
-    return Record.objects.filter(date__date=datetime.now().date(), user=user).count() == 0
-
-
 class RecordSerializer(serializers.Serializer):
     value = serializers.FloatField(allow_null=False, validators=[check_weight])
 
@@ -40,6 +36,7 @@ class RecordSerializer(serializers.Serializer):
         return Record.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
+        print(validated_data)
         instance.value = validated_data.get('value', instance.value)
         instance.data = validated_data.get('date', instance.date)
         instance.user = instance.user
