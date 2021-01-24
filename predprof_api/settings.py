@@ -23,6 +23,7 @@ SECRET_KEY = 'qs_=qy(pem$mh5_ih8m%h8*o&etg2od#o(ao4*mh4f(i#%!e$u'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ORIGIN_WHITELIST = [
@@ -36,6 +37,7 @@ CORS_ALLOW_HEADERS = [
     'authorization',
     'content-type',
     'dnt',
+    'access',
     'origin',
     'user-agent',
     'x-csrftoken',
