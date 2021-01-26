@@ -1,24 +1,33 @@
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as d_login
+from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from django.http.response import HttpResponse as hresp
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import permissions
 from datetime import datetime
 from .models import Record
 from .serializers import RecordSerializer, UserSerializer
+import json
 
 
+@csrf_exempt
 def register(request):
-    log = request.GET.get('login', None)
-    pwd = request.GET.get('password', None)
+    log = json.loads(request.body)['login'] or None
+    pwd = json.loads(request.body)['password'] or None
     if log and pwd:
         if User.objects.filter(username=log):
-            return hresp(status=400)
+            return hresp(status=409)
         else:
             u = User.objects.create_user(log)
+            try:
+                validate_password(pwd, u)
+            except Exception as e:
+                u.delete()
+                return hresp(status=411, content=json.dumps(str(e)))
             u.set_password(pwd)
             u.save()
             return hresp(status=200)
