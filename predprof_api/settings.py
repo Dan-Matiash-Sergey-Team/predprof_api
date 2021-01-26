@@ -43,7 +43,9 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '195.133.147.101'
+]
 
 # Application definition
 
