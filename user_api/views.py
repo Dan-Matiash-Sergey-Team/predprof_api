@@ -80,7 +80,7 @@ def edit_record(request):
         v = request.GET.get('value', None)
         d = request.GET.get('date', None)
         if v:
-            r = Record.objects.get(date__date=(datetime.strptime(d, "%Y-%m-%d")).date(), user=request.user)
+            r = Record.objects.get(date__date=(datetime.datetime.strptime(d, "%Y-%m-%d")).date(), user=request.user)
             if r:
                 r.value = v
                 r.save()
