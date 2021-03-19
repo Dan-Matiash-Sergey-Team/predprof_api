@@ -145,3 +145,11 @@ class RecordView(APIView):
             serializer.save()
             return Response(status=200)
         return Response(status=400)
+
+    def blyat(self, request):
+        print("blyat")
+
+# git add --all
+# git commit -m a
+# git push -u origin master
+#
