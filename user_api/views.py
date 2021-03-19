@@ -136,9 +136,9 @@ class RecordView(APIView):
             return Response(status=400)
 
     def put(self, request):
-        record = get_object_or_404(Record.objects.filter(user=request.user), date__date=datetime.now().date())
         data = request.data.get('record')
-        data['date'] = datetime.now()
+        record = get_object_or_404(Record.objects.filter(user=request.user),
+                                   date__date=datetime.strptime(data['date'], '%Y-%m-%d'))
         print(data)
         serializer = RecordSerializer(instance=record, data=data, partial=True)
         print(serializer.is_valid(raise_exception=True))
