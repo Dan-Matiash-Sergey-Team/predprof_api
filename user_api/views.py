@@ -78,8 +78,9 @@ def new_record(request):
 def edit_record(request):
     if request.user.is_authenticated:
         v = request.GET.get('value', None)
+        d = request.GET.get('date', None)
         if v:
-            r = Record.objects.get(date__date=datetime.now().date(), user=request.user)
+            r = Record.objects.get(date__date=d, user=request.user)
             if r:
                 r.value = v
                 r.save()
