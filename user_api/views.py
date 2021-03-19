@@ -146,10 +146,6 @@ class RecordView(APIView):
             return Response(status=200)
         return Response(status=400)
 
-    def blyat(self, request):
-        print("blyat")
-        return Response(status=400)
-
 # git add --all
 # git commit -m a
 # git push -u origin master
