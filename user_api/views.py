@@ -137,6 +137,7 @@ class RecordView(APIView):
 
     def put(self, request):
         data = request.data.get('record')
+        print(data['date'])
         record = get_object_or_404(Record.objects.filter(user=request.user),
                                    date__date=datetime.strptime(data['date'], "%Y-%m-%d").date())
         print(data)
